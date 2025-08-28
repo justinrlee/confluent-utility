@@ -1,0 +1,38 @@
+FROM eclipse-temurin:17-jdk-noble
+
+RUN apt-get update \
+  && apt-get install -y \
+    software-properties-common \
+    curl \
+    dnsutils \
+    iputils-ping \
+    telnet \
+    netcat-traditional \
+    less \
+    vim \
+    ldap-utils \
+    jq \
+    unzip \
+    kafkacat \
+  && rm -rf /var/lib/apt/lists/*
+
+ADD build/confluent-8.0.0.tar.gz /opt
+ADD build/confluent_linux_amd64.tar.gz /opt
+
+ADD build/awscli-exe-linux-x86_64.zip /opt
+RUN unzip /opt/awscli-exe-linux-x86_64.zip && /aws/install && rm -r /aws
+
+ADD build/vault_1.20.2_linux_amd64.zip /opt
+RUN unzip /opt/vault_1.20.2_linux_amd64.zip -d /usr/local/bin
+
+ADD build/kubectl-amd64 /usr/local/bin/kubectl
+ADD build/yq_linux_amd64 /usr/local/bin/yq
+RUN chmod +x /usr/local/bin/kubectl /usr/local/bin/yq
+
+ENV PATH="${PATH}:/opt/confluent:/opt/confluent-8.0.0/bin"
+
+WORKDIR /root
+
+CMD ["tail", "-f", "/dev/null"]
+ENTRYPOINT []
+
