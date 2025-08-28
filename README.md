@@ -63,23 +63,7 @@ Build system for confluent-utility
 Usually run on an x86-64 Ubuntu EC2 instance. Does a multi-arch (amd64 and arm64) build, but you need to set up multiarch:
 
 ```bash
-sudo apt-get update -y && \
-  sudo apt-get install -y \
-    ca-certificates \
-    curl \
-    gnupg \
-    lsb-release \
-  && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg \
-  && echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null \
-  && sudo apt-get update -y \
-  && sudo apt-get install -y docker-ce docker-ce-cli docker-compose containerd.io \
-  && sudo usermod -aG docker ubuntu
-
-sudo apt-get install -y \
-  qemu-user-static \
-  binfmt-support
+./scripts/install_prereqs.sh
 ```
 
 Once Docker is installed, log out and log back in (to inherit new permissions). Then do:
@@ -89,14 +73,20 @@ Once Docker is installed, log out and log back in (to inherit new permissions). 
 docker login -u justinrlee
 ```
 
+Download all packages (both amd64 and arm64)
+
+```bash
+./scripts/downloads.sh
+```
+
 Local build only (will create different tag for each architecture)
 
 ```bash
-bash build.sh
+./scripts/build.sh
 ```
 
 Create and push multi-arch image
 
 ```bash
-bash push.sh
+./scripts/push.sh
 ```
