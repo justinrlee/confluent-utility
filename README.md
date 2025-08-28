@@ -39,7 +39,7 @@ spec:
     matchLabels:
       app: confluent-utility
   serviceName: "confluent-utility"
-  replicas: 1 # by default is 1
+  replicas: 1
   template:
     metadata:
       labels:
