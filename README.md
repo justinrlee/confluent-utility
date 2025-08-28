@@ -11,18 +11,21 @@ Provides the following:
   * vault
   * kubectl
   * aws
+  * ldapsearch
 * Network tools:
   * ping
   * dig
   * curl
   * telnet
   * nslookup
+  * openssl
 * Misc:
   * jq
   * yq
   * unzip
   * vim
   * less
+  * full Java JDK
 
 ## Use (kubernetes)
 
