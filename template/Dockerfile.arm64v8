@@ -16,20 +16,22 @@ RUN apt-get update \
     kafkacat \
   && rm -rf /var/lib/apt/lists/*
 
-ADD build/confluent-8.0.0.tar.gz /opt
+ADD build/confluent-${CONFLUENT_PLATFORM_FULL_VERSION}.tar.gz /opt
 ADD build/confluent_linux_arm64.tar.gz /opt
 
 ADD build/awscli-exe-linux-aarch64.zip /opt
 RUN unzip /opt/awscli-exe-linux-aarch64.zip && /aws/install && rm -r /aws
 
-ADD build/vault_1.20.2_linux_arm64.zip /opt
-RUN unzip /opt/vault_1.20.2_linux_arm64.zip -d /usr/local/bin
+ADD build/vault_${VAULT_VERSION}_linux_arm64.zip /opt
+RUN unzip /opt/vault_${VAULT_VERSION}_linux_arm64.zip -d /usr/local/bin
 
 ADD build/kubectl-arm64 /usr/local/bin/kubectl
 ADD build/yq_linux_arm64 /usr/local/bin/yq
 RUN chmod +x /usr/local/bin/kubectl /usr/local/bin/yq
 
-ENV PATH="${PATH}:/opt/confluent:/opt/confluent-8.0.0/bin"
+RUN ln -s /opt/confluent-${CONFLUENT_PLATFORM_FULL_VERSION} /opt/confluent
+
+ENV PATH="${DOLLAR}{PATH}:/opt/cli/confluent:/opt/confluent/bin:/root/bin"
 
 WORKDIR /root
 
