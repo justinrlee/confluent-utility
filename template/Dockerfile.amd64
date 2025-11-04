@@ -16,9 +16,6 @@ RUN apt-get update \
     kafkacat \
   && rm -rf /var/lib/apt/lists/*
 
-ADD build/confluent-${CONFLUENT_PLATFORM_FULL_VERSION}.tar.gz /opt
-ADD build/confluent_linux_amd64.tar.gz /opt/cli
-
 ADD build/awscli-exe-linux-x86_64.zip /opt
 RUN unzip /opt/awscli-exe-linux-x86_64.zip && /aws/install && rm -r /aws
 
@@ -29,12 +26,17 @@ ADD build/kubectl-amd64 /usr/local/bin/kubectl
 ADD build/yq_linux_amd64 /usr/local/bin/yq
 RUN chmod +x /usr/local/bin/kubectl /usr/local/bin/yq
 
-RUN ln -s /opt/confluent-${CONFLUENT_PLATFORM_FULL_VERSION} /opt/confluent
+# Results in binaries at /opt/confluent-x.x.x/bin/kafka-X
+ADD build/confluent-${CONFLUENT_PLATFORM_FULL_VERSION}.tar.gz /opt
+# Results in binary at /opt/confluent/confluent
+ADD build/confluent_linux_amd64.tar.gz /opt
 
-ENV PATH="${DOLLAR}{PATH}:/opt/cli/confluent:/opt/confluent/bin:/root/bin"
+# Resulting binaries are at /opt/confluent/latest/bin
+RUN ln -s /opt/confluent-${CONFLUENT_PLATFORM_FULL_VERSION} /opt/confluent/latest
+
+ENV PATH="${DOLLAR}{PATH}:/opt/confluent:/opt/confluent/latest/bin:/root/bin"
 
 WORKDIR /root
 
 CMD ["tail", "-f", "/dev/null"]
 ENTRYPOINT []
-
